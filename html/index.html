@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>4x4 platform controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="site.webmanifest">
+  <style>
+    .btn {
+      background-color: white;
+      border: solid black;
+      border-width: 0 10px 10px 0;
+      display: inline-block;
+      padding: 20px;
+      outline: none;
+    }
+
+    .btn_cntr {
+      background-color: white;
+      border: solid black;
+      border-width: 10px;
+      display: inline-block;
+      padding: 16px;
+      outline: none;
+    }
+
+    .btn_up {
+      transform: rotate(-135deg);
+    }
+
+    .btn_dwn {
+      transform: rotate(45deg);
+    }
+
+    .btn_lft {
+      transform: rotate(135deg);
+    }
+
+    .btn_rght {
+      transform: rotate(-45deg);
+    }
+
+    .btn_prssd {
+      background-color: green;
+    }
+
+    .container {
+      display: grid;
+      max-width: 100%;
+      margin: auto auto;
+    }
+
+    @media all and (min-width: 300px) {
+      .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 3fr 1fr;
+      }
+    }
+
+    @media all and (min-width: 800px) {
+      .container {
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<script>
+   function fwdStart() {
+     document.getElementById("up_btn").classList.add("btn_prssd")
+   }
+   function fwdStop() {
+     document.getElementById("up_btn").classList.remove("btn_prssd")
+   }
+   function leftStart() {
+     document.getElementById("lft_btn").classList.add("btn_prssd")
+   }
+   function leftStop() {
+     document.getElementById("lft_btn").classList.remove("btn_prssd")
+   }
+   function rightStart() {
+     document.getElementById("rght_btn").classList.add("btn_prssd")
+   }
+   function rightStop() {
+     document.getElementById("rght_btn").classList.remove("btn_prssd")
+   }
+   function backStart() {
+     document.getElementById("dwn_btn").classList.add("btn_prssd")
+   }
+   function backStop() {
+     document.getElementById("dwn_btn").classList.remove("btn_prssd")
+   }
+   function cntrStart() {
+     document.getElementById("cntr_btn").classList.add("btn_prssd")
+   }
+   function cntrStop() {
+     document.getElementById("cntr_btn").classList.remove("btn_prssd")
+   }
+</script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+
+  <div class="container">
+    <div style="min-width: 300px; border-spacing:0px; border-width:0px;">
+      <img style="width:100%;height:100%;" src="./cam">
+    </div>
+    <div style="min-width: 100px; border-spacing:0px; border-width:0px;">
+    <table style="margin:0% auto; text-align:center; border-spacing:10px; border-width:0px;">
+        <tr>
+		<td></td>
+		<td>
+			<button class="btn btn_up" id="up_btn" onpointerdown="fwdStart()" onpointerup="fwdStop()" onpointerout="fwdStop()"></button>
+		</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>
+			<button class="btn btn_lft" id="lft_btn" onpointerdown="leftStart()" onpointerup="leftStop()" onpointerout="leftStop()"></button>
+		</td>
+		<td>
+			<button class="btn btn_cntr" id="cntr_btn" onpointerdown="cntrStart()" onpointerup="cntrStop()" onpointerout="cntrStop()"></button>
+                </td>
+		<td>
+			<button class="btn btn_rght" id="rght_btn" onpointerdown="rightStart()" onpointerup="rightStop()" onpointerout="rightStop()"></button>
+		</td>
+	</tr>		
+	<tr>
+		<td></td>
+		<td>
+			<button class="btn btn_dwn" id="dwn_btn" onpointerdown="backStart()" onpointerup="backStop()" onpointerout="backStop()"></button>
+		</td>
+		<td></td>
+	</tr>
+	</table>
+    </div>
+  </div>
+</body>
+
+</html>
