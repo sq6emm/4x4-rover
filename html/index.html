@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>4x4 platform controller</title>
+  <title>4x4 rover Wariatuncio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <link rel="manifest" href="site.webmanifest">
   <style>
@@ -69,31 +69,63 @@
 
 <body>
 <script>
+function makeRequest (method, url, data) {
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.onload = function () {
+      if (this.status >= 200 && this.status < 300) {
+        resolve(xhr.response);
+      } else {
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        });
+      }
+    };
+    xhr.onerror = function () {
+      reject({
+        status: this.status,
+        statusText: xhr.statusText
+      });
+    };
+    if(method=="PUT" && data){
+        xhr.send(data);
+    }else{
+        xhr.send();
+    }
+  });
+}
    function fwdStart() {
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "forward" }');
      document.getElementById("up_btn").classList.add("btn_prssd")
    }
    function fwdStop() {
      document.getElementById("up_btn").classList.remove("btn_prssd")
    }
    function leftStart() {
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "turnleft" }');
      document.getElementById("lft_btn").classList.add("btn_prssd")
    }
    function leftStop() {
      document.getElementById("lft_btn").classList.remove("btn_prssd")
    }
    function rightStart() {
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "turnright" }');
      document.getElementById("rght_btn").classList.add("btn_prssd")
    }
    function rightStop() {
      document.getElementById("rght_btn").classList.remove("btn_prssd")
    }
    function backStart() {
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "forward" }');
      document.getElementById("dwn_btn").classList.add("btn_prssd")
    }
    function backStop() {
      document.getElementById("dwn_btn").classList.remove("btn_prssd")
    }
    function cntrStart() {
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "stop" }');
      document.getElementById("cntr_btn").classList.add("btn_prssd")
    }
    function cntrStop() {
