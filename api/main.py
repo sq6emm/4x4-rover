@@ -43,12 +43,12 @@ class DirectionEnum(str, Enum):
     stop = 'stop'
 
 class Drive(BaseModel):
-    direction: DirectionEnum
+    cmd: DirectionEnum
     speed: conint(ge=0, le=100) = None
 
 @app.get("/drive", tags=["Drive"])
 def get_drive():
-    return { "direction" : last_dir }
+    return { "cmd" : last_dir }
 
 @app.put("/drive", tags=["Drive"])
 async def update_drive( 
@@ -56,22 +56,22 @@ async def update_drive(
     ):
     real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
     global last_dir
-    if drive.direction.value == "stop":
+    if drive.cmd.value == "stop":
         values(0,0)
-    if drive.direction.value == "forward":
+    if drive.cmd.value == "forward":
         values(100,100)
-    if drive.direction.value == "backward":
+    if drive.cmd.value == "backward":
         values(-100,-100)
-    if drive.direction.value == "spinleft":
+    if drive.cmd.value == "spinleft":
         values(-100,100)
-    if drive.direction.value == "spinright":
+    if drive.cmd.value == "spinright":
         values(100,-100)
-    last_dir = drive.direction.value
-    if drive.direction.value == "turnleft":
+    last_dir = drive.cmd.value
+    if drive.cmd.value == "turnleft":
         tmp_left_speed, tmp_right_speed = real_left_speed, real_right_speed
         values(real_left_speed*0.4,real_right_speed*0.8)
         values(tmp_left_speed,tmp_right_speed)
-    if drive.direction.value == "turnright":
+    if drive.cmd.value == "turnright":
         tmp_left_speed, tmp_right_speed = real_left_speed, real_right_speed
         values(real_left_speed*0.8,real_right_speed*0.4)
         values(tmp_left_speed,tmp_right_speed)
