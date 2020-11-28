@@ -2,7 +2,6 @@
 
 # TODO:
 # GET / to handle status - almost done
-# Handle speed change?
 
 import logging, sys, atexit
 from fastapi import FastAPI
@@ -24,6 +23,7 @@ rightMotor = Motor(RIGHT_FORWARD_PIN, RIGHT_REVERSE_PIN, None, True, None)
 
 real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 last_dir = None
+speed = 80
 
 app = FastAPI(
     title = "4x4 Rover API",
@@ -48,24 +48,26 @@ class Drive(BaseModel):
 
 @app.get("/drive", tags=["Drive"])
 def get_drive():
-    return { "cmd" : last_dir }
+    return { "cmd" : last_dir , "speed" : speed }
 
 @app.put("/drive", tags=["Drive"])
 async def update_drive( 
     drive: Drive
     ):
     real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
-    global last_dir
+    global last_dir, speed
+    if drive.speed:
+        speed = drive.speed
     if drive.cmd.value == "stop":
         values(0,0)
     if drive.cmd.value == "forward":
-        values(100,100)
+        values(speed,speed)
     if drive.cmd.value == "backward":
-        values(-100,-100)
+        values(-speed,-speed)
     if drive.cmd.value == "spinleft":
-        values(-100,100)
+        values(-speed,speed)
     if drive.cmd.value == "spinright":
-        values(100,-100)
+        values(speed,-speed)
     last_dir = drive.cmd.value
     if drive.cmd.value == "turnleft":
         tmp_left_speed, tmp_right_speed = real_left_speed, real_right_speed
