@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# TODO:
+# GET / to handle status
+# Stop slowly when program exits
+# Handle speed change?
+
 import logging, sys
 from fastapi import FastAPI
 from typing import Optional
