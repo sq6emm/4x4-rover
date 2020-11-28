@@ -118,7 +118,7 @@ function makeRequest (method, url, data) {
      document.getElementById("rght_btn").classList.remove("btn_prssd")
    }
    function backStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "direction": "forward" }');
+     makeRequest('PUT', '/rover/api/drive', '{ "direction": "backward" }');
      document.getElementById("dwn_btn").classList.add("btn_prssd")
    }
    function backStop() {
