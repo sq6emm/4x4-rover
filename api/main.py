@@ -6,9 +6,19 @@ from typing import Optional
 from pydantic import BaseModel, conint
 from enum import Enum
 from time import sleep
-
+from gpiozero import Motor, LED
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+
+LEFT_FORWARD_PIN = 19 # (LEFT LPWM)
+LEFT_REVERSE_PIN = 21 # (LEFT RPWM)
+RIGHT_FORWARD_PIN = 20 # (RIGHT LPWM)
+RIGHT_REVERSE_PIN = 18 # (RIGHT RPWM)
+
+leftMotor= Motor(LEFT_FORWARD_PIN, LEFT_REVERSE_PIN, None, True, None)
+rightMotor = Motor(RIGHT_FORWARD_PIN, RIGHT_REVERSE_PIN, None, True, None)
+
+real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 
 app = FastAPI(
     title = "4x4 Rover API",
@@ -18,8 +28,6 @@ app = FastAPI(
     redoc_url=None
 )
 
-real_left_speed, real_right_speed = -50, 70
-step = 10
 
 class DirectionEnum(str, Enum):
     forward = 'forward'
@@ -35,38 +43,26 @@ class Drive(BaseModel):
     speed: conint(ge=0, le=100) = None
 
 @app.get("/drive", tags=["Drive"])
-async def get_drive():
-    return {"rover": {"drive": {"left_speed": real_left_speed, "right_speed": real_right_speed }}}
+async def get_drive(
+    drive: Drive
+    ):
+    return drive.direction.value
 
 @app.put("/drive", tags=["Drive"])
 async def update_drive( 
     drive: Drive
     ):
-    print(drive.direction.value)
+    if drive.speed: print(drive.speed.value)
+    if drive.direction.value == "stop": values(0,0)
+    if drive.direction.value == "forward": values(100,100)
+    if drive.direction.value == "backward": values(-100,-100)
+    if drive.direction.value == "spinleft": values(-100,100)
+    if drive.direction.value == "spinright": values(100,-100)
+    if drive.direction.value == "turnleft": values(75,100)
+    if drive.direction.value == "turnright": values(100,75)
     return drive
 
-def stop():
-    values(0,0,step)
-
-def forward():
-    values(100,100,step)
-
-def backward():
-    values(100,100,step)
-
-def spinleft():
-    values(-100,100,step)
-
-def spinright():
-    values(100,-100,step)
-
-def turnleft():
-    values(0,100,step)
-
-def turnright():
-    values(100,0,step)
-
-def values(expected_left_speed,expected_right_speed,step):
+def values(expected_left_speed,expected_right_speed,step=10):
 
     global real_left_speed, real_right_speed
 
@@ -134,12 +130,32 @@ def values(expected_left_speed,expected_right_speed,step):
                 new_right_speed = expected_right_speed
 
         logging.debug("set\t\tL: " + str(new_left_speed) + "\tR: " + str(new_right_speed))
-        real_left_speed = new_left_speed
-        real_right_speed = new_right_speed
+
+        # here really set speed and sleep for 0.1 sec?
+
+        if new_left_speed > 0:
+            leftMotor.forward(speed=abs(new_left_speed/100))
+            sleep(0.1)
+        if new_left_speed < 0:
+            leftMotor.backward(speed=abs(new_left_speed/100))
+            sleep(0.1)
+        if new_right_speed > 0:
+            rightMotor.forward(speed=abs(new_right_speed/100))
+            sleep(0.1)
+        if new_right_speed < 0:
+            rightMotor.backward(speed=abs(new_right_speed/100))
+            sleep(0.1)
+
         if new_left_speed == 0:
+            leftMotor.stop()
+            sleep(0.5)
             logging.debug(" L - sleep longer!")
         if new_right_speed == 0:
+            rightMotor.stop()
+            sleep(0.5)
             logging.debug(" R - sleep longer!")
+
+        real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 
     logging.info("achieved L: " + str(new_left_speed)+" R: "+str(new_right_speed))
     return {"rover": {"drive": {"left_speed": new_left_speed, "right_speed": new_right_speed }}}
