@@ -2,16 +2,34 @@
 
 import logging, sys
 from fastapi import FastAPI
+from typing import Optional
+from pydantic import BaseModel
+from enum import Enum
 from time import sleep
 
+
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-#logging.debug('A debug message!')
-#logging.info('We processed %d records', len(processed_records))
 
-
-app = FastAPI()
+app = FastAPI(
+    title = "4x4 Rover API",
+    description = " This is an API used to controll 4x4 Rover Platform",
+    version = "beta"
+)
 
 real_left_speed, real_right_speed = -0.5, 0.7
+
+class DirectionEnum(str, Enum):
+    forward = 'forward'
+    backward = 'backward'
+    spinleft = 'spinleft'
+    spinright = 'spinright'
+    left = 'left'
+    right = 'right'
+    stop = 'stop'
+
+class Drive(BaseModel):
+    direction: DirectionEnum
+    speed: Optional[int] = None
 
 @app.get("/")
 async def root():
@@ -19,7 +37,14 @@ async def root():
 
 @app.get("/status")
 async def root():
-    return values(1,-1,10)
+    return {"rover": {"drive": {"left_speed": real_left_speed, "right_speed": real_right_speed }}}
+
+
+@app.post("/drive")
+async def update_item(
+    drive: Drive
+    ):
+    return {"rover": {"drive": {"left_speed": real_left_speed, "right_speed": real_right_speed }}}
 
 
 def values(expected_left_speed,expected_right_speed,step):
@@ -36,8 +61,8 @@ def values(expected_left_speed,expected_right_speed,step):
     left_step=round(abs(current_left_speed - expected_left_speed)/step,2)
     right_step=round(abs(current_right_speed - expected_right_speed)/step,2)
 
-    logging.info("current\t\tL: " + str(current_left_speed)+"\t R: "+str(current_right_speed))
-    logging.info("expected\tL: " + str(expected_left_speed)+"\t R: "+str(expected_right_speed))
+    logging.info("current L: " + str(current_left_speed)+" R: "+str(current_right_speed))
+    logging.info("expected L: " + str(expected_left_speed)+" R: "+str(expected_right_speed))
 
     previous_left_speed=current_left_speed
     new_left_speed=current_left_speed
@@ -97,5 +122,5 @@ def values(expected_left_speed,expected_right_speed,step):
         if new_right_speed == 0:
             logging.debug(" R - sleep longer!")
 
-    logging.info("achieved\tL: " + str(new_left_speed)+"\tR: "+str(new_right_speed))
+    logging.info("achieved L: " + str(new_left_speed)+" R: "+str(new_right_speed))
     return {"rover": {"drive": {"left_speed": new_left_speed, "right_speed": new_right_speed }}}
