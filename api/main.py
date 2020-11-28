@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 # TODO:
-# GET / to handle status
-# Stop slowly when program exits
+# GET / to handle status - almost done
 # Handle speed change?
 
-import logging, sys
+import logging, sys, atexit
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel, conint
 from enum import Enum
 from time import sleep
-from gpiozero import Motor, LED
+from gpiozero import Motor
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
@@ -24,6 +23,7 @@ leftMotor= Motor(LEFT_FORWARD_PIN, LEFT_REVERSE_PIN, None, True, None)
 rightMotor = Motor(RIGHT_FORWARD_PIN, RIGHT_REVERSE_PIN, None, True, None)
 
 real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
+last_dir = None
 
 app = FastAPI(
     title = "4x4 Rover API",
@@ -32,7 +32,6 @@ app = FastAPI(
     docs_url="/documentation",
     redoc_url=None
 )
-
 
 class DirectionEnum(str, Enum):
     forward = 'forward'
@@ -48,21 +47,34 @@ class Drive(BaseModel):
     speed: conint(ge=0, le=100) = None
 
 @app.get("/drive", tags=["Drive"])
-async def get_drive():
-    return leftMotor.value*100, rightMotor.value*100
+def get_drive():
+    return { "direction" : last_dir }
 
 @app.put("/drive", tags=["Drive"])
 async def update_drive( 
     drive: Drive
     ):
-    if drive.speed: print(drive.speed.value)
-    if drive.direction.value == "stop": values(0,0)
-    if drive.direction.value == "forward": values(100,100)
-    if drive.direction.value == "backward": values(-100,-100)
-    if drive.direction.value == "spinleft": values(-100,100)
-    if drive.direction.value == "spinright": values(100,-100)
-    if drive.direction.value == "turnleft": values(50,100)
-    if drive.direction.value == "turnright": values(100,50)
+    real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
+    global last_dir
+    if drive.direction.value == "stop":
+        values(0,0)
+    if drive.direction.value == "forward":
+        values(100,100)
+    if drive.direction.value == "backward":
+        values(-100,-100)
+    if drive.direction.value == "spinleft":
+        values(-100,100)
+    if drive.direction.value == "spinright":
+        values(100,-100)
+    last_dir = drive.direction.value
+    if drive.direction.value == "turnleft":
+        tmp_left_speed, tmp_right_speed = real_left_speed, real_right_speed
+        values(real_left_speed*0.4,real_right_speed*0.8)
+        values(tmp_left_speed,tmp_right_speed)
+    if drive.direction.value == "turnright":
+        tmp_left_speed, tmp_right_speed = real_left_speed, real_right_speed
+        values(real_left_speed*0.8,real_right_speed*0.4)
+        values(tmp_left_speed,tmp_right_speed)
     return drive
 
 def values(expected_left_speed,expected_right_speed,step=10):
@@ -138,8 +150,6 @@ def values(expected_left_speed,expected_right_speed,step=10):
 
         logging.debug("set\t\tL: " + str(new_left_speed) + "\tR: " + str(new_right_speed))
 
-        # here really set speed and sleep for 0.1 sec?
-
         if new_left_speed > 0:
             leftMotor.forward(speed=abs(new_left_speed/100))
             sleep(0.1)
@@ -165,3 +175,10 @@ def values(expected_left_speed,expected_right_speed,step=10):
         real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 
     logging.info("achieved L: " + str(new_left_speed)+" R: "+str(new_right_speed))
+
+def OnExit():
+    logging.info("Stopping engines on exit")
+    values(0,0)
+    logging.info("Engines stopped")
+
+atexit.register(OnExit)
