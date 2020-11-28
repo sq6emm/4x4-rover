@@ -43,10 +43,8 @@ class Drive(BaseModel):
     speed: conint(ge=0, le=100) = None
 
 @app.get("/drive", tags=["Drive"])
-async def get_drive(
-    drive: Drive
-    ):
-    return drive.direction.value
+async def get_drive():
+    return leftMotor.value*100, rightMotor.value*100
 
 @app.put("/drive", tags=["Drive"])
 async def update_drive( 
@@ -58,8 +56,8 @@ async def update_drive(
     if drive.direction.value == "backward": values(-100,-100)
     if drive.direction.value == "spinleft": values(-100,100)
     if drive.direction.value == "spinright": values(100,-100)
-    if drive.direction.value == "turnleft": values(75,100)
-    if drive.direction.value == "turnright": values(100,75)
+    if drive.direction.value == "turnleft": values(50,100)
+    if drive.direction.value == "turnright": values(100,50)
     return drive
 
 def values(expected_left_speed,expected_right_speed,step=10):
@@ -70,8 +68,12 @@ def values(expected_left_speed,expected_right_speed,step=10):
     current_right_speed = real_right_speed
 
     if expected_left_speed > 100 or expected_left_speed < -100 or expected_right_speed > 100 or expected_right_speed < -100:
-        logging.debug("expected values outside range")
-        exit(1)
+        logging.info("expected values outside range")
+        return None
+
+    if expected_left_speed == current_left_speed and expected_right_speed == current_right_speed:
+        logging.info("no state change")
+        return None
 
     left_step=round(abs(current_left_speed - expected_left_speed)/step,2)
     right_step=round(abs(current_right_speed - expected_right_speed)/step,2)
@@ -158,4 +160,3 @@ def values(expected_left_speed,expected_right_speed,step=10):
         real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 
     logging.info("achieved L: " + str(new_left_speed)+" R: "+str(new_right_speed))
-    return {"rover": {"drive": {"left_speed": new_left_speed, "right_speed": new_right_speed }}}
