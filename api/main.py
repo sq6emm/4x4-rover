@@ -3,7 +3,7 @@
 import logging, sys
 from fastapi import FastAPI
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conint
 from enum import Enum
 from time import sleep
 
@@ -13,39 +13,58 @@ logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 app = FastAPI(
     title = "4x4 Rover API",
     description = " This is an API used to controll 4x4 Rover Platform",
-    version = "beta"
+    version = "beta",
+    docs_url="/documentation",
+    redoc_url=None
 )
 
-real_left_speed, real_right_speed = -0.5, 0.7
+real_left_speed, real_right_speed = -50, 70
+step = 10
 
 class DirectionEnum(str, Enum):
     forward = 'forward'
     backward = 'backward'
     spinleft = 'spinleft'
     spinright = 'spinright'
-    left = 'left'
-    right = 'right'
+    turnleft = 'turnleft'
+    turnright = 'turnright'
     stop = 'stop'
 
 class Drive(BaseModel):
     direction: DirectionEnum
-    speed: Optional[int] = None
+    speed: conint(ge=0, le=100) = None
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@app.get("/status")
-async def root():
+@app.get("/drive", tags=["Drive"])
+async def get_drive():
     return {"rover": {"drive": {"left_speed": real_left_speed, "right_speed": real_right_speed }}}
 
-
-@app.post("/drive")
-async def update_item(
+@app.put("/drive", tags=["Drive"])
+async def update_drive( 
     drive: Drive
     ):
-    return {"rover": {"drive": {"left_speed": real_left_speed, "right_speed": real_right_speed }}}
+    print(drive.direction.value)
+    return drive
 
+def stop():
+    values(0,0,step)
+
+def forward():
+    values(100,100,step)
+
+def backward():
+    values(100,100,step)
+
+def spinleft():
+    values(-100,100,step)
+
+def spinright():
+    values(100,-100,step)
+
+def turnleft():
+    values(0,100,step)
+
+def turnright():
+    values(100,0,step)
 
 def values(expected_left_speed,expected_right_speed,step):
 
@@ -54,7 +73,7 @@ def values(expected_left_speed,expected_right_speed,step):
     current_left_speed = real_left_speed
     current_right_speed = real_right_speed
 
-    if expected_left_speed > 1 or expected_left_speed < -1 or expected_right_speed > 1 or expected_right_speed < -1:
+    if expected_left_speed > 100 or expected_left_speed < -100 or expected_right_speed > 100 or expected_right_speed < -100:
         logging.debug("expected values outside range")
         exit(1)
 
