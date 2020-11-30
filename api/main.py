@@ -29,7 +29,8 @@ app = FastAPI(
     title = "4x4 Rover API",
     description = " This is an API used to controll 4x4 Rover Platform",
     version = "beta",
-    docs_url="/documentation",
+    root_path_in_servers=False,
+    root_path="/api",
     redoc_url=None
 )
 
@@ -154,16 +155,16 @@ def values(expected_left_speed,expected_right_speed,step=10):
 
         if new_left_speed > 0:
             leftMotor.forward(speed=abs(new_left_speed/100))
-            sleep(0.1)
+            sleep(0.2)
         if new_left_speed < 0:
             leftMotor.backward(speed=abs(new_left_speed/100))
-            sleep(0.1)
+            sleep(0.2)
         if new_right_speed > 0:
             rightMotor.forward(speed=abs(new_right_speed/100))
-            sleep(0.1)
+            sleep(0.2)
         if new_right_speed < 0:
             rightMotor.backward(speed=abs(new_right_speed/100))
-            sleep(0.1)
+            sleep(0.2)
 
         if new_left_speed == 0:
             leftMotor.stop()
