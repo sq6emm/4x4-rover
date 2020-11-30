@@ -97,35 +97,35 @@ function makeRequest (method, url, data) {
   });
 }
    function fwdStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "cmd": "forward" }');
+     makeRequest('PUT', 'api/drive', '{ "cmd": "forward" }');
      document.getElementById("up_btn").classList.add("btn_prssd")
    }
    function fwdStop() {
      document.getElementById("up_btn").classList.remove("btn_prssd")
    }
    function leftStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "cmd": "turnleft" }');
+     makeRequest('PUT', 'api/drive', '{ "cmd": "turnleft" }');
      document.getElementById("lft_btn").classList.add("btn_prssd")
    }
    function leftStop() {
      document.getElementById("lft_btn").classList.remove("btn_prssd")
    }
    function rightStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "cmd": "turnright" }');
+     makeRequest('PUT', 'api/drive', '{ "cmd": "turnright" }');
      document.getElementById("rght_btn").classList.add("btn_prssd")
    }
    function rightStop() {
      document.getElementById("rght_btn").classList.remove("btn_prssd")
    }
    function backStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "cmd": "backward" }');
+     makeRequest('PUT', 'api/drive', '{ "cmd": "backward" }');
      document.getElementById("dwn_btn").classList.add("btn_prssd")
    }
    function backStop() {
      document.getElementById("dwn_btn").classList.remove("btn_prssd")
    }
    function cntrStart() {
-     makeRequest('PUT', '/rover/api/drive', '{ "cmd": "stop" }');
+     makeRequest('PUT', 'api/drive', '{ "cmd": "stop" }');
      document.getElementById("cntr_btn").classList.add("btn_prssd")
    }
    function cntrStop() {
