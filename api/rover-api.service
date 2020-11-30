@@ -1,0 +1,8 @@
+[Unit]
+Description=4x4 Rover API service
+After=multi-user.target
+[Service]
+ExecStart=/usr/local/bin/uvicorn --app-dir /home/pi/4x4-rover/api main:app --reload --proxy-headers
+User=pi
+[Install]
+WantedBy=multi-user.target
