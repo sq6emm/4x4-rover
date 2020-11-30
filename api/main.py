@@ -23,15 +23,12 @@ rightMotor = Motor(RIGHT_FORWARD_PIN, RIGHT_REVERSE_PIN, None, True, None)
 
 real_left_speed, real_right_speed = leftMotor.value*100, rightMotor.value*100
 last_dir = None
-speed = 80
+speed = 100
 
 app = FastAPI(
     title = "4x4 Rover API",
     description = " This is an API used to controll 4x4 Rover Platform",
-    version = "beta",
-    root_path_in_servers=False,
-    root_path="/api",
-    redoc_url=None
+    version = "beta"
 )
 
 class DirectionEnum(str, Enum):
