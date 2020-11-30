@@ -1,7 +1,8 @@
 [Unit]
 Description=4x4 Rover API service
-After=multi-user.target
+After=ssh.target
 [Service]
+Restart=on-failure
 ExecStart=/usr/local/bin/uvicorn --app-dir /home/pi/4x4-rover/api main:app --reload --proxy-headers
 User=pi
 [Install]
