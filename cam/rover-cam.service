@@ -1,0 +1,9 @@
+[Unit]
+Description=4x4 Rover API service
+After=ssh.target
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/python3 /home/pi/4x4-rover/cam/picam.py
+User=pi
+[Install]
+WantedBy=multi-user.target
