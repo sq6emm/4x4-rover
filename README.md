@@ -88,23 +88,23 @@ pip3 install picamera
 
 ```
 sudo bash
-cp 4x4-rover/api/rover-api.service /lib/systemd/system/
-cp 4x4-rover/cam/rover-cam.service /lib/systemd/system/
+cp /home/pi/4x4-rover/api/rover-api.service /lib/systemd/system/
+cp /home/pi/4x4-rover/cam/rover-cam.service /lib/systemd/system/
 systemctl daemon-reload
 systemctl enable rover-api.service
 systemctl enable rover-cam.service
 systemctl start rover-api.service
 systemctl start rover-cam.service
 
-cp 4x4-rover/nginx/sites-available/default /etc/nginx/sites-available/default
+cp /home/pi/4x4-rover/nginx/sites-available/default /etc/nginx/sites-available/default
 systemctl restart nginx
 ```
 
-NOW MAKE RPI readonly...
-
+## Clean installation 
+```
 apt remove --purge triggerhappy cron logrotate dbus avahi-daemon triggerhappy bluez
 apt autoremove
-
 dphys-swapfile swapoff
 dphys-swapfile uninstall
 update-rc.d dphys-swapfile remove
+```
