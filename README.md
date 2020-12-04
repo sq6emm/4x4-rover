@@ -49,27 +49,47 @@ echo "Disabling wlan0 power_save"
 /sbin/iw wlan0 set power_save off
 ```
 
-after first boot
+### Unmount your SD card, place it into RPI and boot...
 
-systemctl disable hciuart
-systemctl enable ssh
+# Tasks after first boot
 
+Connect with ssh as user `pi`
+
+## Disable BT uart (as root)
+
+`systemctl disable hciuart`
+
+## Enable ssh permanently (as root)
+
+`systemctl enable ssh`
+
+## Make full system update (as root)
+
+```
 apt update
 apt upgrade
+```
 
-apt install python3-pip python3-gpiozero git nginx-light
-user pi:
+### Install required packages (as root)
+
+`apt install python3-pip python3-gpiozero git nginx-light`
+
+### Install python requirements (as pi)
+```
 pip3 install fastapi
 pip3 install uvicorn
 pip3 install picamera
+```
+### Clone git contents (as pi, in /home/pi)
 
-git clone https://github.com/sq6emm/4x4-rover.git
+`git clone https://github.com/sq6emm/4x4-rover.git`
 
+### Enable services
+
+```
 sudo bash
-
 cp 4x4-rover/api/rover-api.service /lib/systemd/system/
 cp 4x4-rover/cam/rover-cam.service /lib/systemd/system/
-
 systemctl daemon-reload
 systemctl enable rover-api.service
 systemctl enable rover-cam.service
@@ -78,6 +98,7 @@ systemctl start rover-cam.service
 
 cp 4x4-rover/nginx/sites-available/default /etc/nginx/sites-available/default
 systemctl restart nginx
+```
 
 NOW MAKE RPI readonly...
 
