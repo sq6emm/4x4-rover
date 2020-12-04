@@ -1,0 +1,20 @@
+server {
+	listen 80 default_server;
+	root /home/pi/4x4-rover/html;
+	index index.html;
+	server_name _;
+	location / {
+		try_files $uri $uri/ =404;
+	}
+        location /cam {
+                proxy_pass http://localhost:8080/stream.mjpg;
+        }
+        location /api/ {
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_redirect off;
+                proxy_buffering off;
+                proxy_pass http://localhost:8000/;
+        }
+}
