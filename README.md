@@ -19,35 +19,35 @@ Simple project to controll Rover Robot. Web with cam and API.
 ## Fetch data from git
 
 `cd /tmp/rover`
+
 `git clone https://github.com/sq6emm/4x4-rover.git`
+
 `cd /tmp/rover/4x4rover/`
 
 ## Now we will modify some files...
 
-### Enable ssh after reboot
-
-`touch /media/dawszy/bootfs/ssh`
 
 ### Enable pi camera, disable bluetooth and camera led, set defaults for used gpio pins
 
-`` 
-cat >> /boot/config.txt
-start_x=1
-gpu_mem=128
-disable_camera_led=1
-dtoverlay=disable-bt
-gpio=18,19,20,21=op,dl
-gpio=4,17,22,27=op,dl
+`cat raspbian/boot/config.txt.addon >> /media/dawszy/bootfs/config.txt`
 
-cat > /etc/wpa_supplicant/wpa_supplicant.conf
+### Enable wifi (remember to modify this file by adding your WIFI networks)
 
+`cp raspbian/boot/wpa_supplicant.conf /media/dawszy/bootfs/`
 
-/etc/rc.local
+### Enable ssh after reboot
+
+`cp raspbian/boot/ssh /media/dawszy/bootfs/`
+
+### Modify /media/dawszy/rootfs/etc/rc.local to disable power saving for wifi.
+
+`vi /media/dawszy/rootfs/etc/rc.local`
+
+add following lines before "exit 0"
+``
 echo "Disabling wlan0 power_save"
 /sbin/iw wlan0 set power_save off
-
-echo "wariatuncio-dev" > /etc/hostname
-echo "127.0.2.1 wariatuncio-dev" >> /etc/hosts
+``
 
 after first boot
 
