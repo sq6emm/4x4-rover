@@ -1,17 +1,36 @@
 Simple project to controll Rover Robot. Web with cam and API.
 
-### Installation instructions
+# Installation instructions
 ## Prepare SD card
 
-# Fetch raspbian
+### Fetch raspbian
 `curl https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip --output 2020-12-02-raspios-buster-armhf-lite.zip`
-# Unzip raspbian image
+### Unzip raspbian image
 `unzip 2020-12-02-raspios-buster-armhf-lite.zip`
-# Burn (yeah old style) to SD card
+### Burn (yeah old style) to SD card
 `dd if=2020-12-02-raspios-buster-armhf-lite.img of=/dev/sdb`
 
-touch /boot/ssh
+## Reconnect SD card so it will be mounted (in my case in /media/dawszy/{root,boot}fs
 
+### Lets fetch some needed files to: /tmp/rover/
+
+`mkdir -p /tmp/rover`
+
+## Fetch data from git
+
+`cd /tmp/rover`
+`git clone https://github.com/sq6emm/4x4-rover.git`
+`cd /tmp/rover/4x4rover/`
+
+## Now we will modify some files...
+
+### Enable ssh after reboot
+
+`touch /media/dawszy/bootfs/ssh`
+
+### Enable pi camera, disable bluetooth and camera led, set defaults for used gpio pins
+
+`` 
 cat >> /boot/config.txt
 start_x=1
 gpu_mem=128
