@@ -44,10 +44,10 @@ Simple project to controll Rover Robot. Web with cam and API.
 `vi /media/dawszy/rootfs/etc/rc.local`
 
 add following lines before "exit 0"
-``
+```
 echo "Disabling wlan0 power_save"
 /sbin/iw wlan0 set power_save off
-``
+```
 
 after first boot
 
