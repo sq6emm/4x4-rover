@@ -1,13 +1,14 @@
 Simple project to controll Rover Robot. Web with cam and API.
 
-## Installation instructions
-# Prepare SD card
+### Installation instructions
+## Prepare SD card
 
+# Fetch raspbian
 `curl https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/2020-12-02-raspios-buster-armhf-lite.zip --output 2020-12-02-raspios-buster-armhf-lite.zip`
-
+# Unzip raspbian image
 `unzip 2020-12-02-raspios-buster-armhf-lite.zip`
-
-`dd if=2020-12-02-raspios-buster-armhf-lite.img of=/dev/sdb` (write to SD card)
+# Burn (yeah old style) to SD card
+`dd if=2020-12-02-raspios-buster-armhf-lite.img of=/dev/sdb`
 
 touch /boot/ssh
 
