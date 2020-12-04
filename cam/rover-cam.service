@@ -4,7 +4,7 @@ After=network.target
 [Service]
 Restart=on-failure
 WorkDir=/home/pi/4x4-rover/cam/
-ExecStart=/usr/bin/python3 /home/pi/4x4-rover/cam/picam.py >> /tmp/cam.log
+ExecStart=/usr/bin/python3 /home/pi/4x4-rover/cam/picam.py
 User=pi
 [Install]
 WantedBy=multi-user.target
