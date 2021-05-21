@@ -27,9 +27,10 @@ Simple project to controll Rover Robot. Web with cam and API.
 ## Now we will modify some files...
 
 
-### Enable pi camera, disable bluetooth and camera led, set defaults for used gpio pins
+### Enable pi camera, disable bluetooth/built-in wifi and camera led, set defaults for used gpio pins
 
 `cat raspbian/boot/config.txt.addon >> /media/dawszy/bootfs/config.txt`
+`cp raspbian/etc/modprobe.d/4x4-rover-blacklist.conf /etc/modprobe.d/`
 
 ### Enable wifi (remember to modify this file by adding your WIFI networks)
 
