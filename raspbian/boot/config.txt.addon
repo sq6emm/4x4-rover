@@ -2,5 +2,6 @@ start_x=1
 gpu_mem=128
 disable_camera_led=1
 dtoverlay=disable-bt
+dtoverlay=pi3-disable-wifi
 gpio=18,19,20,21=op,dl
 gpio=4,17,22,27=op,dl
