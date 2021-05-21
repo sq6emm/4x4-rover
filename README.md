@@ -32,6 +32,10 @@ Simple project to controll Rover Robot. Web with cam and API.
 `cat raspbian/boot/config.txt.addon >> /media/dawszy/bootfs/config.txt`
 `cp raspbian/etc/modprobe.d/4x4-rover-blacklist.conf /etc/modprobe.d/`
 
+### Disable console on /dev/ttyAMA0
+
+remove `console=serial0,115200` from `/boot/cmdline.txt`
+
 ### Enable wifi (remember to modify this file by adding your WIFI networks)
 
 `cp raspbian/boot/wpa_supplicant.conf /media/dawszy/bootfs/`
