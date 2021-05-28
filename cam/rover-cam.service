@@ -1,5 +1,5 @@
 [Unit]
-Description=4x4 Rover API service
+Description=4x4 Rover CAM service
 After=network.target
 [Service]
 Restart=on-failure
