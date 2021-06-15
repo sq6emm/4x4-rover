@@ -8,6 +8,7 @@ const uint8_t RIGHT_REVERSE_PIN = 7; // 18 # (RIGHT RPWM)
 const uint8_t EN = 46; // Never connect anything to it.
 const uint8_t BRAKE_PIN = 36;
 const uint8_t LIGHT_PIN = 37;
+const uint8_t MOVER_ENGINE_PIN = 38;
 
 BTS7960 LeftMotor(EN, LEFT_FORWARD_PIN, LEFT_REVERSE_PIN);
 BTS7960 RightMotor(EN, RIGHT_FORWARD_PIN, RIGHT_REVERSE_PIN);
@@ -18,13 +19,15 @@ int leftThrottle,rightThrottle;
 int forwardThrottle,backwardThrottle;
 int speed;
 int forwardLeft,forwardRight,backwardLeft,backwardRight,spinLeft,spinRight;
-int brake,light;
+int brake,light,mover_engine;
 
 void setup() {
   digitalWrite(BRAKE_PIN, HIGH); // do this first
   pinMode(BRAKE_PIN, OUTPUT);
   digitalWrite(LIGHT_PIN, HIGH); // do this first
   pinMode(LIGHT_PIN, OUTPUT);
+  digitalWrite(MOVER_ENGINE_PIN, HIGH); // do this first
+  pinMode(MOVER_ENGINE_PIN, OUTPUT);
 
   // initialize serial port for debug
   Serial.begin(115200);
@@ -37,6 +40,7 @@ void setup() {
 void loop() {
   brake=constrain(map(IBusServo.readChannel(6),1000,2000,0,1),0,1);
   light=constrain(map(IBusServo.readChannel(7),1000,2000,0,1),0,1);
+  mover_engine=constrain(map(IBusServo.readChannel(9),1000,2000,0,1),0,1);
   speed=constrain(map(IBusServo.readChannel(2),1000,2000,0,100),0,100)*brake;
   
   forwardThrottle=constrain(map(IBusServo.readChannel(1),1500,2000,0,100),0,100);
@@ -84,7 +88,7 @@ void loop() {
       RightMotor.TurnRight(map(backwardRight,0,100,0,255));
     };
   };
-  
+
   Serial.print(speed);
   Serial.print(" ");
   Serial.print(forwardLeft);
@@ -98,5 +102,7 @@ void loop() {
   Serial.print(brake);
   Serial.print(" ");
   Serial.print(light);
+  Serial.print(" ");
+  Serial.print(mover_engine);
   Serial.println();
 }
