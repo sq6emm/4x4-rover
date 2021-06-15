@@ -32,68 +32,69 @@ void setup() {
   // iBUS setup
   IBusServo.begin(Serial1);
   Serial.println("Starting Wariatuncio... Dawid Szymanski 2021");
-
 }
 
 void loop() {
-    brake=constrain(map(IBusServo.readChannel(6),1000,2000,0,1),0,1);
-    light=constrain(map(IBusServo.readChannel(7),1000,2000,0,1),0,1);
-    speed=constrain(map(IBusServo.readChannel(2),1000,2000,0,100),0,100)*brake;
+  brake=constrain(map(IBusServo.readChannel(6),1000,2000,0,1),0,1);
+  light=constrain(map(IBusServo.readChannel(7),1000,2000,0,1),0,1);
+  speed=constrain(map(IBusServo.readChannel(2),1000,2000,0,100),0,100)*brake;
+  
+  forwardThrottle=constrain(map(IBusServo.readChannel(1),1500,2000,0,100),0,100);
+  backwardThrottle=constrain(map(IBusServo.readChannel(1),1500,1000,0,100),0,100);
     
-    forwardThrottle=constrain(map(IBusServo.readChannel(1),1500,2000,0,100),0,100);
-    backwardThrottle=constrain(map(IBusServo.readChannel(1),1500,1000,0,100),0,100);
-    
-    leftThrottle=constrain(map(IBusServo.readChannel(0),1000,1500,0,100),0,100);
-    rightThrottle=constrain(map(IBusServo.readChannel(0),1500,2000,100,0),0,100);
+  leftThrottle=constrain(map(IBusServo.readChannel(0),1000,1500,0,100),0,100);
+  rightThrottle=constrain(map(IBusServo.readChannel(0),1500,2000,100,0),0,100);
 
-    forwardLeft=speed*forwardThrottle/100*leftThrottle/100;
-    forwardRight=speed*forwardThrottle/100*rightThrottle/100;
-    backwardLeft=speed*backwardThrottle/100*leftThrottle/100;
-    backwardRight=speed*backwardThrottle/100*rightThrottle/100;
+  forwardLeft=speed*forwardThrottle/100*leftThrottle/100;
+  forwardRight=speed*forwardThrottle/100*rightThrottle/100;
+  backwardLeft=speed*backwardThrottle/100*leftThrottle/100;
+  backwardRight=speed*backwardThrottle/100*rightThrottle/100;
 
   if(brake == 1) { digitalWrite(BRAKE_PIN, LOW); delay(10); } else { digitalWrite(BRAKE_PIN, HIGH); delay(10); }
   if(light == 1) { digitalWrite(LIGHT_PIN, LOW); } else { digitalWrite(LIGHT_PIN, HIGH); }
 
   if(forwardLeft == 0 && backwardLeft == 0 && forwardRight == 0 && backwardRight == 0) {
-     if (leftThrottle < 100 && rightThrottle == 100) {
-        LeftMotor.TurnRight(map((100-leftThrottle)*speed/100,0,100,0,255));
-        RightMotor.TurnLeft(map((100-leftThrottle)*speed/100,0,100,0,255));
-      } else if (rightThrottle < 100 && leftThrottle == 100) {
-        LeftMotor.TurnLeft(map((100-rightThrottle)*speed/100,0,100,0,255));
-        RightMotor.TurnRight(map((100-rightThrottle)*speed/100,0,100,0,255));        
-      } else {
-        LeftMotor.Stop();
-        RightMotor.Stop();
-      }
+    
+    if (leftThrottle < 100 && rightThrottle == 100) {
+      LeftMotor.TurnRight(map((100-leftThrottle)*speed/100,0,100,0,255));
+      RightMotor.TurnLeft(map((100-leftThrottle)*speed/100,0,100,0,255));
+    } else if (rightThrottle < 100 && leftThrottle == 100) {
+      LeftMotor.TurnLeft(map((100-rightThrottle)*speed/100,0,100,0,255));
+      RightMotor.TurnRight(map((100-rightThrottle)*speed/100,0,100,0,255));        
     } else {
-      if(forwardLeft == 0 && backwardLeft == 0) {
-        LeftMotor.Stop();
-      } else if (forwardLeft > 0 && backwardLeft == 0) {
-        LeftMotor.TurnLeft(map(forwardLeft,0,100,0,255));
-      } else if (forwardLeft == 0 && backwardLeft > 0) {
-        LeftMotor.TurnRight(map(backwardLeft,0,100,0,255));
-      };
-
-      if(forwardRight == 0 && backwardRight == 0) {
-        RightMotor.Stop();
-      } else if (forwardRight > 0 && backwardRight == 0) {
-        RightMotor.TurnLeft(map(forwardRight,0,100,0,255));
-      } else if (forwardRight == 0 && backwardRight > 0) {
-        RightMotor.TurnRight(map(backwardRight,0,100,0,255));
-      };
+      LeftMotor.Stop();
+      RightMotor.Stop();
+    }
+    
+  } else {
+    
+    if(forwardLeft == 0 && backwardLeft == 0) {
+      LeftMotor.Stop();
+    } else if (forwardLeft > 0 && backwardLeft == 0) {
+      LeftMotor.TurnLeft(map(forwardLeft,0,100,0,255));
+    } else if (forwardLeft == 0 && backwardLeft > 0) {
+      LeftMotor.TurnRight(map(backwardLeft,0,100,0,255));
     };
 
-    Serial.print(forwardLeft);
-    Serial.print(" ");
-    Serial.print(forwardRight);
-    Serial.print(" ");
-    Serial.print(backwardLeft);
-    Serial.print(" ");
-    Serial.print(backwardRight);
-    Serial.print(" ");
-    Serial.print(brake);
-    Serial.print(" ");
-    Serial.print(light);
-    Serial.println();
+    if(forwardRight == 0 && backwardRight == 0) {
+      RightMotor.Stop();
+    } else if (forwardRight > 0 && backwardRight == 0) {
+      RightMotor.TurnLeft(map(forwardRight,0,100,0,255));
+    } else if (forwardRight == 0 && backwardRight > 0) {
+      RightMotor.TurnRight(map(backwardRight,0,100,0,255));
+    };
+  };
 
+  Serial.print(forwardLeft);
+  Serial.print(" ");
+  Serial.print(forwardRight);
+  Serial.print(" ");
+  Serial.print(backwardLeft);
+  Serial.print(" ");
+  Serial.print(backwardRight);
+  Serial.print(" ");
+  Serial.print(brake);
+  Serial.print(" ");
+  Serial.print(light);
+  Serial.println();
 }
