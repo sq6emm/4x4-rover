@@ -84,7 +84,9 @@ void loop() {
       RightMotor.TurnRight(map(backwardRight,0,100,0,255));
     };
   };
-
+  
+  Serial.print(speed);
+  Serial.print(" ");
   Serial.print(forwardLeft);
   Serial.print(" ");
   Serial.print(forwardRight);
