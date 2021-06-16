@@ -54,7 +54,7 @@ void loop() {
   rightThrottle=constrain(map(IBusServo.readChannel(0),1500,2000,100,0),0,100);
 
   if (cnt_read_last == cnt_read_before) {
-    Serial.println("No updates from receiver, failsafe mode engaged!");
+    Serial.print("No updates from receiver, failsafe mode engaged! ");
     speed=0;
     brake=0;
     mover_engine=0;
@@ -68,7 +68,7 @@ void loop() {
   if(brake == 1) { digitalWrite(BRAKE_PIN, LOW); delay(10); } else { digitalWrite(BRAKE_PIN, HIGH); delay(10); }
   if(light == 1) { digitalWrite(LIGHT_PIN, LOW); } else { digitalWrite(LIGHT_PIN, HIGH); }
 
-  if(forwardLeft == 0 && backwardLeft == 0 && forwardRight == 0 && backwardRight == 0) {
+  if(forwardLeft == 0 && backwardLeft == 0 && forwardRight == 0 && backwardRight == 0 && mover_engine == 0) {
     
     if (leftThrottle < 100 && rightThrottle == 100) {
       LeftMotor.TurnRight(map((100-leftThrottle)*speed/100,0,100,0,255));
@@ -100,8 +100,6 @@ void loop() {
     };
   };
   
-  Serial.print(IBusServo.cnt_rec);
-  Serial.print(" ");
   Serial.print(speed);
   Serial.print(" ");
   Serial.print(forwardLeft);
