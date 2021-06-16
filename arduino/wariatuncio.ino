@@ -20,6 +20,7 @@ int forwardThrottle,backwardThrottle;
 int speed;
 int forwardLeft,forwardRight,backwardLeft,backwardRight,spinLeft,spinRight;
 int brake,light,mover_engine;
+int cnt_read_last,cnt_read_before;
 
 void setup() {
   digitalWrite(BRAKE_PIN, HIGH); // do this first
@@ -38,16 +39,26 @@ void setup() {
 }
 
 void loop() {
+  cnt_read_before=cnt_read_last;
+  cnt_read_last=IBusServo.cnt_rec;
+
   brake=constrain(map(IBusServo.readChannel(6),1000,2000,0,1),0,1);
   light=constrain(map(IBusServo.readChannel(7),1000,2000,0,1),0,1);
   mover_engine=constrain(map(IBusServo.readChannel(9),1000,2000,0,1),0,1);
   speed=constrain(map(IBusServo.readChannel(2),1000,2000,0,100),0,100)*brake;
-  
+
   forwardThrottle=constrain(map(IBusServo.readChannel(1),1500,2000,0,100),0,100);
   backwardThrottle=constrain(map(IBusServo.readChannel(1),1500,1000,0,100),0,100);
     
   leftThrottle=constrain(map(IBusServo.readChannel(0),1000,1500,0,100),0,100);
   rightThrottle=constrain(map(IBusServo.readChannel(0),1500,2000,100,0),0,100);
+
+  if (cnt_read_last == cnt_read_before) {
+    Serial.println("No updates from receiver, failsafe mode engaged!");
+    speed=0;
+    brake=0;
+    mover_engine=0;
+  }  
 
   forwardLeft=speed*forwardThrottle/100*leftThrottle/100;
   forwardRight=speed*forwardThrottle/100*rightThrottle/100;
@@ -88,7 +99,9 @@ void loop() {
       RightMotor.TurnRight(map(backwardRight,0,100,0,255));
     };
   };
-
+  
+  Serial.print(IBusServo.cnt_rec);
+  Serial.print(" ");
   Serial.print(speed);
   Serial.print(" ");
   Serial.print(forwardLeft);
